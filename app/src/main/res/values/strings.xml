@@ -1,0 +1,108 @@
+<resources>
+    <string name="app_name">License Admin</string>
+
+    <!-- Auth Screen -->
+    <string name="auth_badge">KHUSUS ADMINISTRATOR</string>
+    <string name="auth_title">Admin License Manager</string>
+    <string name="auth_subtitle">Kelola kode aktivasi multi-aplikasi dan reset perangkat pembeli secara real-time melalui Cloud Firestore.</string>
+    <string name="auth_sign_in_google">Masuk dengan Google</string>
+    <string name="auth_signing_in">Memverifikasi akun admin…</string>
+    <string name="auth_restricted_note">Terkunci eksklusif untuk akun admin terverifikasi (farahrifa58@gmail.com). Login dengan akun lain akan otomatis ditolak.</string>
+    <string name="auth_error_access_denied">Akses Ditolak: Akun ini tidak memiliki izin Admin.</string>
+    <string name="auth_error_config_missing">Konfigurasi Google Sign-In belum lengkap (default_web_client_id tidak ditemukan).</string>
+    <string name="auth_error_generic">Gagal masuk dengan Google. Silakan coba lagi.</string>
+
+    <!-- Top Bar & Settings -->
+    <string name="dashboard_title">License Admin</string>
+    <string name="dashboard_sign_out">Keluar</string>
+    <string name="dashboard_refresh">Muat ulang data</string>
+    <string name="dashboard_settings">Pengaturan</string>
+    <string name="settings_title">Pengaturan Tampilan</string>
+    <string name="settings_theme_subtitle">Pilih tema antarmuka sesuai kenyamanan mata Anda</string>
+    <string name="settings_theme_dark">Tema Gelap</string>
+    <string name="settings_theme_dark_desc">Nuansa gelap modern, nyaman di layar HP &amp; hemat baterai</string>
+    <string name="settings_theme_light">Tema Terang</string>
+    <string name="settings_theme_light_desc">Tampilan cerah dan bersih untuk ruangan terang</string>
+    <string name="settings_close">Tutup</string>
+
+    <!-- Multi-App Switcher -->
+    <string name="switcher_section_title">Aplikasi Aktif</string>
+    <string name="switcher_add_app">Tambah</string>
+    <string name="switcher_connected">Terhubung</string>
+    <string name="switcher_edit_app">Edit Aplikasi</string>
+    <string name="switcher_delete_app">Hapus Aplikasi</string>
+    <string name="switcher_prefix_badge">Prefix %1$s-</string>
+
+    <!-- Stats Cards (Compact) -->
+    <string name="stat_total_codes">Total</string>
+    <string name="stat_available_codes">Tersedia</string>
+    <string name="stat_used_codes">Terpakai</string>
+    <string name="stat_active_buyers">Pembeli</string>
+
+    <!-- Code Generator -->
+    <string name="generator_title">Generator Kode Aktivasi</string>
+    <string name="generator_subtitle">Format: %1$s-XXXX-XXXX</string>
+    <string name="generator_count_label">Jumlah kode</string>
+    <string name="generator_button">Generate %1$d Kode</string>
+    <string name="generator_generating">Menyimpan ke Firestore…</string>
+    <string name="generator_result_title">Kode Baru Dibuat (%1$d)</string>
+    <string name="action_copy_all">Salin Semua</string>
+    <string name="action_copied">Tersalin!</string>
+
+    <!-- Tabs -->
+    <string name="tab_activation_codes">Kode Aktivasi</string>
+    <string name="tab_buyers_devices">Pembeli</string>
+
+    <!-- Activation Codes List -->
+    <string name="filter_all">Semua</string>
+    <string name="filter_available">Tersedia</string>
+    <string name="filter_used">Terpakai</string>
+    <string name="search_codes_hint">Cari kode, usaha, atau email…</string>
+    <string name="status_available">Tersedia</string>
+    <string name="status_used">Terpakai</string>
+    <string name="action_copy_code">Salin</string>
+    <string name="action_delete_code">Hapus</string>
+    <string name="snackbar_code_copied">Kode berhasil disalin</string>
+    <string name="empty_codes_title">Belum ada kode aktivasi</string>
+    <string name="empty_codes_subtitle">Tekan Generate Kode di atas untuk membuat lisensi baru.</string>
+    <string name="empty_search_title">Data tidak ditemukan</string>
+    <string name="empty_search_subtitle">Coba ubah kata kunci pencarian atau filter status.</string>
+
+    <!-- Buyers & Device Reset -->
+    <string name="search_buyers_hint">Cari usaha, email, atau kode…</string>
+    <string name="device_status_bound">Terikat Perangkat</string>
+    <string name="device_status_ready">Siap Login di HP Baru</string>
+    <string name="action_reset_device">Reset Perangkat</string>
+    <string name="empty_buyers_title">Belum ada pembeli terdaftar</string>
+    <string name="empty_buyers_subtitle">Pembeli yang mengaktifkan lisensi akan muncul di sini.</string>
+    <string name="buyer_unnamed">Usaha Tanpa Nama</string>
+    <string name="buyer_no_code">Tanpa kode</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_add_app_title">Tambah Aplikasi Baru</string>
+    <string name="dialog_edit_app_title">Edit Aplikasi</string>
+    <string name="dialog_app_name_label">Nama Aplikasi</string>
+    <string name="dialog_app_name_placeholder">Contoh: Kasir Pro</string>
+    <string name="dialog_prefix_label">Awalan / Prefix Kode</string>
+    <string name="dialog_prefix_placeholder">Contoh: KASIR atau JUALAN</string>
+    <string name="dialog_db_id_label">Firestore Database ID</string>
+    <string name="dialog_db_id_placeholder">Contoh: db-kasir-pro</string>
+    <string name="dialog_save">Simpan</string>
+    <string name="dialog_cancel">Batal</string>
+    <string name="dialog_delete_app">Hapus Aplikasi</string>
+
+    <string name="dialog_delete_app_title">Hapus Aplikasi Ini?</string>
+    <string name="dialog_delete_app_message">Aplikasi %1$s (%2$s) akan dihapus dari daftar lokal di perangkat ini. Data di Cloud Firestore tetap aman dan tidak terhapus.</string>
+    <string name="dialog_delete_app_confirm">Hapus dari Daftar</string>
+
+    <string name="dialog_delete_code_title">Hapus Kode Aktivasi?</string>
+    <string name="dialog_delete_code_message">Kode %1$s yang berstatus tersedia akan dihapus permanen dari database %2$s.</string>
+    <string name="dialog_delete_confirm">Hapus Kode</string>
+
+    <string name="dialog_reset_device_title">Reset Perangkat Pembeli?</string>
+    <string name="dialog_reset_device_message">Field registeredDeviceId untuk %1$s (%2$s) akan dikosongkan agar pembeli dapat langsung login kembali di HP baru.</string>
+    <string name="dialog_reset_confirm">Ya, Reset Perangkat</string>
+
+    <string name="error_retry">Coba Lagi</string>
+    <string name="error_firestore_load">Gagal memuat data dari database %1$s</string>
+</resources>

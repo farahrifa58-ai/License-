@@ -1,0 +1,6 @@
+{
+  "name": "License Admin",
+  "description": "Multi-app Admin License Manager with Firebase Auth and Multi-Database Cloud Firestore switcher for activation codes and device resets.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
