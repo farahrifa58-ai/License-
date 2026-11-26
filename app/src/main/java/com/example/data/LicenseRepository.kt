@@ -153,7 +153,11 @@ class LicenseRepository(
         }
     }
 
-    suspend fun resetUserDevice(databaseId: String, userId: String): Result<Unit> {
+    suspend fun resetUserDevice(
+        databaseId: String,
+        userId: String,
+        licenseCode: String
+    ): Result<Unit> {
         val path = "$COLLECTION_USERS/$userId"
         return try {
             requireAdminUid()
@@ -161,15 +165,33 @@ class LicenseRepository(
                 "ID pengguna tidak valid"
             }
             val db = firestoreFor(databaseId)
-            db.collection(COLLECTION_USERS)
-                .document(userId)
-                .update(
-                    mapOf(
-                        "registeredDeviceId" to "",
-                        "updatedAt" to FieldValue.serverTimestamp()
-                    )
+            val userRef = db.collection(COLLECTION_USERS).document(userId)
+            val batch = db.batch()
+            batch.update(
+                userRef,
+                mapOf(
+                    "registeredDeviceId" to "",
+                    "registeredDeviceIds" to emptyList<String>(),
+                    "updatedAt" to FieldValue.serverTimestamp()
                 )
-                .await()
+            )
+
+            val trimmedCode = licenseCode.trim()
+            if (trimmedCode.isNotBlank() && VALID_ID_REGEX.matches(trimmedCode)) {
+                val codeRef = db.collection(COLLECTION_ACTIVATION_CODES).document(trimmedCode)
+                val codeSnapshot = codeRef.get().await()
+                if (codeSnapshot.exists()) {
+                    batch.update(
+                        codeRef,
+                        mapOf(
+                            "registeredDeviceId" to "",
+                            "registeredDeviceIds" to emptyList<String>()
+                        )
+                    )
+                }
+            }
+
+            batch.commit().await()
             Result.success(Unit)
         } catch (e: CancellationException) {
             throw e

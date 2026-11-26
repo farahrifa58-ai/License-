@@ -270,7 +270,11 @@ class LicenseDashboardViewModel(
 
         viewModelScope.launch {
             _controls.value = _controls.value.copy(busyUserId = buyer.id)
-            val result = repository.resetUserDevice(currentApp.databaseId, buyer.id)
+            val result = repository.resetUserDevice(
+                databaseId = currentApp.databaseId,
+                userId = buyer.id,
+                licenseCode = buyer.resolvedLicenseCode
+            )
             _controls.value = _controls.value.copy(busyUserId = null)
             result.onSuccess {
                 _snackbarEvents.tryEmit("Perangkat berhasil direset. Pembeli siap login di HP baru.")

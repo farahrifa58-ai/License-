@@ -32,6 +32,8 @@ data class ActivationCodeDoc(
     val namaUsaha: String? = null,
     val shopName: String? = null,
     val usedByBusinessName: String? = null,
+    val registeredDeviceId: String = "",
+    val registeredDeviceIds: List<String> = emptyList(),
     @ServerTimestamp val usedAt: Timestamp? = null
 ) {
     val isAvailableStatus: Boolean
@@ -62,6 +64,7 @@ data class BuyerUserDoc(
     val licenseCode: String? = null,
     val usedCode: String? = null,
     val registeredDeviceId: String = "",
+    val registeredDeviceIds: List<String> = emptyList(),
     @ServerTimestamp val createdAt: Timestamp? = null,
     @ServerTimestamp val updatedAt: Timestamp? = null
 ) {
@@ -78,8 +81,18 @@ data class BuyerUserDoc(
             .firstOrNull { !it.isNullOrBlank() }
             ?: ""
 
+    val activeDeviceIds: List<String>
+        get() = registeredDeviceIds.filter { it.isNotBlank() }
+
+    val connectedDeviceCount: Int
+        get() = when {
+            activeDeviceIds.isNotEmpty() -> activeDeviceIds.size
+            registeredDeviceId.isNotBlank() -> 1
+            else -> 0
+        }
+
     val deviceBound: Boolean
-        get() = registeredDeviceId.isNotBlank()
+        get() = connectedDeviceCount > 0
 }
 
 enum class CodeFilter {

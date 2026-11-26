@@ -33,6 +33,12 @@ service cloud.firestore {
              request.auth.token.email == 'farahrifa58@gmail.com';
     }
 
+    function isValidDeviceIdList(listVal) {
+      return listVal is list &&
+             listVal.size() <= 10 &&
+             (listVal.size() == 0 || listVal[0] is string);
+    }
+
     function isValidActivationCodeCreate(data) {
       return data.keys().hasAll(['status', 'createdByUid', 'createdAt']) &&
              data.keys().hasOnly(['status', 'createdByUid', 'createdAt']) &&
@@ -49,15 +55,14 @@ service cloud.firestore {
     function isValidActivationCodeUpdate(data) {
       return data.status is string &&
              data.status in ['available', 'used'] &&
-             data.createdByUid is string &&
-             data.createdByUid.size() >= 1 &&
-             data.createdByUid.size() <= 128 &&
-             data.createdAt is timestamp &&
-             data.createdAt <= request.time &&
+             (!('createdByUid' in data) || (data.createdByUid is string && data.createdByUid.size() >= 1 && data.createdByUid.size() <= 128)) &&
+             (!('createdAt' in data) || (data.createdAt is timestamp && data.createdAt <= request.time)) &&
              (!('usedByUid' in data) || data.usedByUid == null || (data.usedByUid is string && data.usedByUid.size() <= 128)) &&
              (!('usedByEmail' in data) || data.usedByEmail == null || (data.usedByEmail is string && data.usedByEmail.size() <= 254)) &&
              (!('buyerEmail' in data) || data.buyerEmail == null || (data.buyerEmail is string && data.buyerEmail.size() <= 254)) &&
              (!('businessName' in data) || data.businessName == null || (data.businessName is string && data.businessName.size() <= 120)) &&
+             (!('registeredDeviceId' in data) || data.registeredDeviceId == null || (data.registeredDeviceId is string && data.registeredDeviceId.size() <= 128)) &&
+             (!('registeredDeviceIds' in data) || data.registeredDeviceIds == null || isValidDeviceIdList(data.registeredDeviceIds)) &&
              (!('usedAt' in data) || data.usedAt == null || (data.usedAt is timestamp && data.usedAt <= request.time)) &&
              (!('updatedAt' in data) || data.updatedAt == null || (data.updatedAt is timestamp && data.updatedAt <= request.time));
     }
@@ -70,6 +75,7 @@ service cloud.firestore {
              (!('activationCode' in data) || data.activationCode == null || (data.activationCode is string && data.activationCode.size() <= 64)) &&
              (!('licenseCode' in data) || data.licenseCode == null || (data.licenseCode is string && data.licenseCode.size() <= 64)) &&
              (!('registeredDeviceId' in data) || data.registeredDeviceId == null || (data.registeredDeviceId is string && data.registeredDeviceId.size() <= 128)) &&
+             (!('registeredDeviceIds' in data) || data.registeredDeviceIds == null || isValidDeviceIdList(data.registeredDeviceIds)) &&
              (!('createdAt' in data) || data.createdAt == null || (data.createdAt is timestamp && data.createdAt <= request.time)) &&
              (!('updatedAt' in data) || data.updatedAt == null || (data.updatedAt is timestamp && data.updatedAt <= request.time));
     }
@@ -85,10 +91,11 @@ service cloud.firestore {
       allow update: if isAdmin() &&
                        isValidId(codeId) &&
                        isValidActivationCodeUpdate(incoming()) &&
-                       incoming().createdByUid == existing().createdByUid &&
-                       incoming().createdAt == existing().createdAt &&
+                       (!('createdByUid' in existing()) || incoming().createdByUid == existing().createdByUid) &&
+                       (!('createdAt' in existing()) || incoming().createdAt == existing().createdAt) &&
                        incoming().diff(existing()).affectedKeys().hasOnly([
-                         'status', 'usedByUid', 'usedByEmail', 'buyerEmail', 'businessName', 'usedAt', 'updatedAt'
+                         'status', 'usedByUid', 'usedByEmail', 'buyerEmail', 'businessName',
+                         'registeredDeviceId', 'registeredDeviceIds', 'usedAt', 'updatedAt'
                        ]);
 
       // Only codes that are still 'available' may be deleted
@@ -106,7 +113,7 @@ service cloud.firestore {
                        incoming().keys().hasAll(['email', 'registeredDeviceId', 'createdAt', 'updatedAt']) &&
                        incoming().keys().hasOnly([
                          'businessName', 'namaUsaha', 'shopName', 'email',
-                         'activationCode', 'licenseCode', 'registeredDeviceId',
+                         'activationCode', 'licenseCode', 'registeredDeviceId', 'registeredDeviceIds',
                          'createdAt', 'updatedAt'
                        ]) &&
                        isValidUserDocument(incoming()) &&
@@ -118,16 +125,19 @@ service cloud.firestore {
                        incoming().updatedAt is timestamp &&
                        incoming().updatedAt <= request.time;
 
-      // Admin Reset Perangkat action: only registeredDeviceId and updatedAt may be modified
+      // Admin Reset Perangkat action: clears registeredDeviceId & registeredDeviceIds and stamps updatedAt
       allow update: if isAdmin() &&
                        isValidId(userId) &&
                        isValidUserDocument(incoming()) &&
                        incoming().registeredDeviceId is string &&
                        incoming().registeredDeviceId.size() <= 128 &&
+                       (!('registeredDeviceIds' in incoming()) || isValidDeviceIdList(incoming().registeredDeviceIds)) &&
                        incoming().updatedAt is timestamp &&
                        incoming().updatedAt <= request.time &&
                        (!('createdAt' in existing()) || incoming().createdAt == existing().createdAt) &&
-                       incoming().diff(existing()).affectedKeys().hasOnly(['registeredDeviceId', 'updatedAt']);
+                       incoming().diff(existing()).affectedKeys().hasOnly([
+                         'registeredDeviceId', 'registeredDeviceIds', 'updatedAt'
+                       ]);
 
       allow delete: if false;
     }

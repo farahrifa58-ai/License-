@@ -46,13 +46,21 @@
           "type": "string",
           "format": "date-time",
           "description": "Optional server timestamp of last update."
+        },
+        "registeredDeviceId": {
+          "type": "string",
+          "description": "Optional legacy single bound device ID cleared during admin device reset."
+        },
+        "registeredDeviceIds": {
+          "type": "array",
+          "description": "Optional list of up to 2 bound device IDs cleared during admin device reset."
         }
       },
       "required": ["status", "createdByUid", "createdAt"]
     },
     "BuyerUser": {
       "title": "BuyerUser",
-      "description": "Registered buyer account bound to a license code and optional device ID.",
+      "description": "Registered buyer account bound to a license code and up to 2 device IDs.",
       "type": "object",
       "properties": {
         "businessName": {
@@ -82,7 +90,11 @@
         },
         "registeredDeviceId": {
           "type": "string",
-          "description": "Hardware device ID currently bound to this buyer; empty string allows login on a new phone."
+          "description": "Legacy single hardware device ID currently bound to this buyer; empty string allows login on a new phone."
+        },
+        "registeredDeviceIds": {
+          "type": "array",
+          "description": "List of hardware device IDs (max 2 devices) currently bound to this buyer; empty array allows login on new phones."
         },
         "createdAt": {
           "type": "string",

@@ -70,8 +70,8 @@
 
     <!-- Buyers & Device Reset -->
     <string name="search_buyers_hint">Cari usaha, email, atau kode…</string>
-    <string name="device_status_bound">Terikat Perangkat</string>
-    <string name="device_status_ready">Siap Login di HP Baru</string>
+    <string name="device_status_connected_count">Terhubung: %1$d/2 HP</string>
+    <string name="device_status_not_connected">Belum terhubung</string>
     <string name="action_reset_device">Reset Perangkat</string>
     <string name="empty_buyers_title">Belum ada pembeli terdaftar</string>
     <string name="empty_buyers_subtitle">Pembeli yang mengaktifkan lisensi akan muncul di sini.</string>
@@ -100,7 +100,7 @@
     <string name="dialog_delete_confirm">Hapus Kode</string>
 
     <string name="dialog_reset_device_title">Reset Perangkat Pembeli?</string>
-    <string name="dialog_reset_device_message">Field registeredDeviceId untuk %1$s (%2$s) akan dikosongkan agar pembeli dapat langsung login kembali di HP baru.</string>
+    <string name="dialog_reset_device_message">Semua perangkat terhubung (registeredDeviceId &amp; registeredDeviceIds) untuk %1$s (%2$s) pada data user dan kode aktivasi akan dikosongkan agar pembeli dapat langsung login kembali di HP baru.</string>
     <string name="dialog_reset_confirm">Ya, Reset Perangkat</string>
 
     <string name="error_retry">Coba Lagi</string>

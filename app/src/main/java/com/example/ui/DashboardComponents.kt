@@ -1039,9 +1039,11 @@ fun BuyerDeviceCard(
     onResetDeviceRequest: () -> Unit
 ) {
     val semantic = LocalSemanticColors.current
-    val isBound = buyer.deviceBound
+    val connectedCount = buyer.connectedDeviceCount
+    val isBound = connectedCount > 0
     val displayBusiness = buyer.resolvedBusinessName.ifBlank { stringResource(R.string.buyer_unnamed) }
     val displayCode = buyer.resolvedLicenseCode.ifBlank { stringResource(R.string.buyer_no_code) }
+    val primaryDevicePreview = buyer.activeDeviceIds.firstOrNull() ?: buyer.registeredDeviceId
 
     Card(
         modifier = Modifier
@@ -1099,9 +1101,9 @@ fun BuyerDeviceCard(
                 Spacer(modifier = Modifier.width(8.dp))
                 StatusPill(
                     text = if (isBound) {
-                        stringResource(R.string.device_status_bound)
+                        stringResource(R.string.device_status_connected_count, connectedCount)
                     } else {
-                        stringResource(R.string.device_status_ready)
+                        stringResource(R.string.device_status_not_connected)
                     },
                     containerColor = if (isBound) semantic.warningContainer else semantic.successContainer,
                     contentColor = if (isBound) semantic.onWarningContainer else semantic.onSuccessContainer
@@ -1141,7 +1143,12 @@ fun BuyerDeviceCard(
                     }
                 }
 
-                if (isBound) {
+                if (isBound && primaryDevicePreview.isNotBlank()) {
+                    val deviceSummary = buildString {
+                        append(primaryDevicePreview.take(10))
+                        if (primaryDevicePreview.length > 10) append("…")
+                        if (connectedCount > 1) append(" (+${connectedCount - 1})")
+                    }
                     Surface(
                         shape = RoundedCornerShape(8.dp),
                         color = semantic.subtleSurface,
@@ -1159,8 +1166,7 @@ fun BuyerDeviceCard(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = buyer.registeredDeviceId.take(12) +
-                                    if (buyer.registeredDeviceId.length > 12) "…" else "",
+                                text = deviceSummary,
                                 style = MonoSmallStyle,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 maxLines = 1,

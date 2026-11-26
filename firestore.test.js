@@ -183,27 +183,45 @@ test("Verified admin: can delete available code but cannot delete used code", as
   await assertFails(db.collection("activation_codes").doc("JUALAN-USED-2222").delete());
 });
 
-test("Verified admin: can list users and reset registeredDeviceId; shadow updates and buyer cross-access fail", async () => {
+test("Verified admin: can list users and reset registeredDeviceId & registeredDeviceIds on users and activation_codes; shadow updates fail", async () => {
   const created = new Date(Date.now() - 20000);
   await testEnv.withSecurityRulesDisabled(async (ctx) => {
-    await ctx.firestore().collection("users").doc(OTHER_UID).set({
+    const raw = ctx.firestore();
+    await raw.collection("users").doc(OTHER_UID).set({
       businessName: "Warung Berkah",
       email: OTHER_EMAIL,
-      activationCode: "JUALAN-USED-2222",
+      activationCode: "LAPAK-USED-2222",
       registeredDeviceId: "android-device-xyz-99",
+      registeredDeviceIds: ["android-device-xyz-99", "android-device-abc-11"],
       createdAt: created,
       updatedAt: created,
+    });
+    await raw.collection("activation_codes").doc("LAPAK-USED-2222").set({
+      status: "used",
+      createdByUid: ADMIN_UID,
+      createdAt: created,
+      registeredDeviceId: "android-device-xyz-99",
+      registeredDeviceIds: ["android-device-xyz-99", "android-device-abc-11"],
     });
   });
 
   const db = adminDb();
   await assertSucceeds(db.collection("users").get());
 
-  // Exact Kotlin Reset Perangkat update payload
+  // Exact Kotlin Reset Perangkat update payload on users/{uid}
   await assertSucceeds(
     db.collection("users").doc(OTHER_UID).update({
       registeredDeviceId: "",
+      registeredDeviceIds: [],
       updatedAt: new Date(Date.now() - 1000),
+    })
+  );
+
+  // Exact Kotlin Reset Perangkat update payload on activation_codes/{kode}
+  await assertSucceeds(
+    db.collection("activation_codes").doc("LAPAK-USED-2222").update({
+      registeredDeviceId: "",
+      registeredDeviceIds: [],
     })
   );
 
@@ -211,16 +229,31 @@ test("Verified admin: can list users and reset registeredDeviceId; shadow update
   await assertFails(
     db.collection("users").doc(OTHER_UID).update({
       registeredDeviceId: "",
+      registeredDeviceIds: [],
       updatedAt: new Date(Date.now() - 1000),
       isAdmin: true,
     })
   );
 
-  // Reject value poisoning (non-string registeredDeviceId)
+  // Reject value poisoning (non-string registeredDeviceId or non-list registeredDeviceIds)
   await assertFails(
     db.collection("users").doc(OTHER_UID).update({
       registeredDeviceId: 12345,
+      registeredDeviceIds: [],
       updatedAt: new Date(Date.now() - 1000),
+    })
+  );
+  await assertFails(
+    db.collection("users").doc(OTHER_UID).update({
+      registeredDeviceId: "",
+      registeredDeviceIds: "not-a-list",
+      updatedAt: new Date(Date.now() - 1000),
+    })
+  );
+  await assertFails(
+    db.collection("activation_codes").doc("LAPAK-USED-2222").update({
+      registeredDeviceId: "",
+      registeredDeviceIds: [12345],
     })
   );
 
@@ -234,7 +267,14 @@ test("Verified admin: can list users and reset registeredDeviceId; shadow update
   await assertFails(
     buyer.collection("users").doc(OTHER_UID).update({
       registeredDeviceId: "",
+      registeredDeviceIds: [],
       updatedAt: new Date(Date.now() - 1000),
+    })
+  );
+  await assertFails(
+    buyer.collection("activation_codes").doc("LAPAK-USED-2222").update({
+      registeredDeviceId: "",
+      registeredDeviceIds: [],
     })
   );
 });
